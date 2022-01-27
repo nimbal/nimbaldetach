@@ -5,7 +5,7 @@ from scipy.signal import butter, filtfilt
 
 def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
                temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-               num_axes=2, quiet=False):
+               temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False):
     """
     Non-wear algorithm with a 5 minute minimum non-wear duration using absolute temperature, temperature rate of
     change and accelerometer standard deviation of 3 axes to detect start and stop times of non-wear periods.
@@ -48,9 +48,9 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
         high = (high_f / nyquist_freq) if high_f is not None else None
         if filt_type == 'lowpass':
             wn = low
-        if filt_type == 'highpass':
+        elif filt_type == 'highpass':
             wn = high
-        if filt_type == 'bandpass':
+        elif filt_type == 'bandpass':
             wn = [low, high]
         b, a = butter(N=filter_order, Wn=wn, btype=filt_type)
         filtered_data = filtfilt(b, a, x=data)
@@ -90,12 +90,10 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
                                                     std_df["z_std_back"] < std_thresh_g], int), axis=0)
 
     # Find spots where at least num_axes are below the STD threshold for 90% of the next 5 minutes
-    std_df["Perc Num Axes >= num_axes for Next 5 Mins (fwd looking)"] = (std_df["Num Axes Fwd"][
-                                                                         ::-1] >= num_axes).rolling(
-        int(accel_freq * 60 * 5)).mean()[::-1]
-    std_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] = (std_df["Num Axes Backwards"][
-                                                                              ::-1] >= num_axes).rolling(
-        int(accel_freq * 60 * 5)).mean()[::-1]
+    std_df["Perc Num Axes >= num_axes for Next 5 Mins (fwd looking)"] = \
+        (std_df["Num Axes Fwd"][::-1] >= num_axes).rolling(int(accel_freq * 60 * 5)).mean()[::-1]
+    std_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] = \
+        (std_df["Num Axes Backwards"][::-1] >= num_axes).rolling(int(accel_freq * 60 * 5)).mean()[::-1]
 
     # Make Accelerometer Datapoints have the same number of datapoints as the temperature values
     full_df = std_df[::int(accel_freq / temperature_freq)]
@@ -120,14 +118,14 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
     # Construct Arrays that will find indexs where a NW bout would end
     # First End Criteria: Rate of Change Path
 
-    end_crit_1 = np.array(np.where((full_df["Num Axes Backwards"] == 0) & (
-            full_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] <= 0.50) & (
-                                           full_df["Mean Five minute Temp Change"] > 0.1)))[0]
+    end_crit_1 = np.array(np.where((full_df["Num Axes Backwards"] == 0) &
+                                   (full_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] <= 0.50) &
+                                   (full_df["Mean Five minute Temp Change"] > temp_inc_roc)))[0]
 
     # Second End Criteria: Absolute Temperature Path
-    end_crit_2 = np.array(np.where((full_df["Num Axes Backwards"] == 0) & (
-            full_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] <= 0.50) & (
-                                           full_df["Min Temp in next five mins"] > low_temperature_cutoff)))[0]
+    end_crit_2 = np.array(np.where((full_df["Num Axes Backwards"] == 0) &
+                                   (full_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] <= 0.50) &
+                                   (full_df["Min Temp in next five mins"] > low_temperature_cutoff)))[0]
 
     end_crit_combined = np.sort(np.unique(np.concatenate((end_crit_1, end_crit_2))))
 
@@ -143,7 +141,7 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
 
         # Start Criteria 1: Rate of Change Path
         if (full_df["Max Temp in next five mins"][start_ind] < high_temperature_cutoff) & (
-                full_df["Mean Five minute Temp Change"][start_ind] < -0.2):
+                full_df["Mean Five minute Temp Change"][start_ind] < temp_dec_roc):
             valid_start = True
 
         # Start Criteria 2: Absolute Temperature Path
