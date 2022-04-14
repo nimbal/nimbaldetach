@@ -5,6 +5,9 @@ can be accessed at **input link to paper when published**
 
 # Contents
 
+v0.1.1
+- testing zenodo
+
 # Installation
 
 # Package Dependency
