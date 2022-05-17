@@ -61,20 +61,22 @@ accel_freq = 75
 temperature_freq = 0.25
 
 # Calculate Non-wear
-start_stop_df, nonwear_array = vertdetach(x_values = x_values, y_values = y_values, z_values = z_values, temperature_values = temperature_values,
-                                               accel_freq = accel_freq, temperature_freq = temperature_freq)
+start_stop_df, nonwear_array = vertdetach(x_values = x_values, y_values = y_values, z_values = z_values, 
+                                          temperature_values = temperature_values, accel_freq = accel_freq, 
+                                          temperature_freq = temperature_freq)
 
 # Analysis
 total_wear_time = np.sum(nonwear_array)
 pct_worn = total_wear_time/len(nonwear_array) * 100
 
-print("The device was not worn of %s percent of the time" % pct_worn)
+print("The device was not worn %s percent of the time" % pct_worn)
 
 ```
 ## Version/Changelog
 
 v1.0.0
-- [Detecting accelerometer non-wear periods using change in acceleration combined with rate-of-change in temperature](https://doi.org/10.1186/s12874-022-01633-6)
+- Detecting accelerometer non-wear periods using change in acceleration combined with rate-of-change in temperature.  
+[![DOI:10.1186/s12874-022-01633-6](https://img.shields.io/badge/DOI-10.1186%2Fs12874--022--01633--6-blue)](https://doi.org/10.1186/s12874-022-01633-6)
 
 
 ## Installation
