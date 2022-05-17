@@ -24,7 +24,7 @@ vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
 ```
 
 ### Input Arguments
-The input arguments and there definitions are listed in the table below
+The input arguments and their definitions are listed in the table below:
 
 | Argument                | Data Type   | Optional (default value) or Required | Description                                                                                             |
 |-------------------------|-------------|--------------------------------------|---------------------------------------------------------------------------------------------------------|
