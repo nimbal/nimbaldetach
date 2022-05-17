@@ -81,7 +81,26 @@ v1.0.0
 
 ## Installation
 
-## Package Dependencies
+To install the latest release of vertdetach directly from GitHub using pip, run the following line in terminal or 
+console:
+
+`pip install git+https://github.com/nimbal/vertdetach`
+
+To install a specific release, insert `@v#.#.#` after the repository name replacing with the tag associated with that 
+release. For example:
+
+`pip install git+https://github.com/nimbal/vertdetach@v1.0.0`
+
+## Include vertdetach as Package Dependency
+
+To include the latest release of vertdetach as a dependency in your Python package, include the following
+string within the list alongside your other dependencies:
+
+`install_requires=['vertdetach@git+https://github.com/nimbal/vertdetach@[version]']`
+
+To include a specific release, replace `[version]` with the tag associated with that release.
+
+## vertdetach Package Dependencies
 - numpy
 - pandas
 - scipy
