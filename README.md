@@ -8,7 +8,7 @@ by integrating a ‘rate-of-change’ criterion for temperature into a combined 
 
 Vert, A., Weber, K. S., Thai, V., Turner, E., Beyer, K. B., Cornish, B. F., Godkin, F. E., Wong, C., McIlroy, W. E., 
 & Van Ooteghem, K. (2022). Detecting accelerometer non-wear periods using change in acceleration combined with 
-rate-of-change in temperature. BMC Medical Research Methodology, 1633. https://doi.org/10.1186/s12874-022-01633-6
+rate-of-change in temperature. *BMC Medical Research Methodology, 22*. https://doi.org/10.1186/s12874-022-01633-6
 
 [![DOI:10.1186/s12874-022-01633-6](https://img.shields.io/badge/DOI-10.1186%2Fs12874--022--01633--6-blue)](https://doi.org/10.1186/s12874-022-01633-6)
 
