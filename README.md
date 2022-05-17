@@ -18,8 +18,8 @@ The DETACH algorithm is stored as a function called vertdetach within the /src/v
 The function itself is defined as follows
 ```python
 vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
-               temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-               temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
+           temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
+           temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
 ```
 
 ### Input Arguments
