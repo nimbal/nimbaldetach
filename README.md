@@ -37,6 +37,8 @@ The input arguments and there definitions are listed in the table below
 | std_thresh_mg           | float       | Optional (8.0)                       | The value which the standard deviation (STD) of an axis in the window must be below to trigger non-wear |
 | low_temperature_cutoff  | float       | Optional (26.0)                      | Low temperature threshold for non-wear classification (see paper for more details)                      |
 | high_temperature_cutoff | float       | Optional (30.0)                      | High temperature threshold for non-wear classification (see paper for more details)                     |
+| temp_dec_roc            | float       | Optional (-0.2)                      | Temperature decrease rate-of-change threshold for non-wear classification (see paper for more details)  |
+| temp_inc_roc            | float       | Optional (0.1)                       | Temperature increase rate-of-change threshold for non-wear classification (see paper for more details)  |
 | num_axes                | int         | Optional (2)                         | Number of axes that must be below the STD threshold to be considered non-wear                           |
 | quiet                   | bool        | Optional (False)                     | Whether or not to quiet print statements.                                                               |
 ### Returns
