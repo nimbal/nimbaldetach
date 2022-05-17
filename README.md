@@ -1,7 +1,15 @@
-# vertdetach
-DETACH (Device Temperature and Acceleration Change) algorithm for detecting non-wear from raw accelerometer data as
-discussed in the paper **A novel method to detect periods of non-wear for body-worn inertial measurement units** which
-can be accessed at [doi.org/10.1186/s12874-022-01633-6]()
+# vertdetach [![DOI](https://zenodo.org/badge/447634532.svg)](https://zenodo.org/badge/latestdoi/447634532)
+
+DETACH (Device Temperature and Acceleration Change) algorithm for detecting non-wear periods for body worn accelerometers 
+by integrating a ‘rate-of-change’ criterion for temperature into a combined temperature-acceleration algorithm.
+
+### Publication
+
+Vert, A., Weber, K. S., Thai, V., Turner, E., Beyer, K. B., Cornish, B. F., Godkin, F. E., Wong, C., McIlroy, W. E., 
+& Van Ooteghem, K. (2022). Detecting accelerometer non-wear periods using change in acceleration combined with 
+rate-of-change in temperature. BMC Medical Research Methodology, 1633. https://doi.org/10.1186/s12874-022-01633-6
+
+[![DOI:10.1186/s12874-022-01633-6](https://img.shields.io/badge/DOI-10.1186%2Fs12874--022--01633--6-blue)](https://doi.org/10.1186/s12874-022-01633-6)
 
 
 ## Using the vertdetach Algorithm
@@ -65,8 +73,9 @@ print("The device was not worn of %s percent of the time" % pct_worn)
 ```
 ## Version/Changelog
 
-v0.1.1
-- testing zenodo
+v1.0.0
+- [Detecting accelerometer non-wear periods using change in acceleration combined with rate-of-change in temperature](https://doi.org/10.1186/s12874-022-01633-6)
+
 
 ## Installation
 
