@@ -1,4 +1,5 @@
-# vertdetach [![DOI](https://zenodo.org/badge/447634532.svg)](https://zenodo.org/badge/latestdoi/447634532)
+# vertdetach 
+[![DOI](https://zenodo.org/badge/447634532.svg)](https://zenodo.org/badge/latestdoi/447634532)
 
 DETACH (Device Temperature and Acceleration Change) algorithm for detecting non-wear periods for body worn accelerometers 
 by integrating a ‘rate-of-change’ criterion for temperature into a combined temperature-acceleration algorithm.
