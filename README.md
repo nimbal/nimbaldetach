@@ -10,9 +10,6 @@ Vert, A., Weber, K. S., Thai, V., Turner, E., Beyer, K. B., Cornish, B. F., Godk
 & Van Ooteghem, K. (2022). Detecting accelerometer non-wear periods using change in acceleration combined with 
 rate-of-change in temperature. *BMC Medical Research Methodology, 22*. https://doi.org/10.1186/s12874-022-01633-6
 
-[![DOI:10.1186/s12874-022-01633-6](https://img.shields.io/badge/DOI-10.1186%2Fs12874--022--01633--6-blue)](https://doi.org/10.1186/s12874-022-01633-6)
-
-
 ## Using the vertdetach Algorithm
 The DETACH algorithm is stored as a function called vertdetach within the /src/vertdetach/vertdetach.py Python file.
 
@@ -77,9 +74,8 @@ print("The device was not worn %s percent of the time" % pct_worn)
 ```
 ## Version/Changelog
 
-v1.0.1
-- Detecting accelerometer non-wear periods using change in acceleration combined with rate-of-change in temperature.  
-[![DOI:10.1186/s12874-022-01633-6](https://img.shields.io/badge/DOI-10.1186%2Fs12874--022--01633--6-blue)](https://doi.org/10.1186/s12874-022-01633-6)
+v1.0.2
+- [Detecting accelerometer non-wear periods using change in acceleration combined with rate-of-change in temperature.](https://doi.org/10.1186/s12874-022-01633-6)
 
 ## Installation
 
