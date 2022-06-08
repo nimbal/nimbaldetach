@@ -200,7 +200,6 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
     np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == -1)[0]
     if vert_nonwear_array[-1] == 1:
         vert_nonwear_end_datapoints = np.append(vert_nonwear_end_datapoints, len(vert_nonwear_array))
-
     start_stop_df = pd.DataFrame({"Start Datapoint": vert_nonwear_start_datapoints,
                                   "End Datapoint": vert_nonwear_end_datapoints}, index = range(1,len(vert_nonwear_start_datapoints) + 1))
 
