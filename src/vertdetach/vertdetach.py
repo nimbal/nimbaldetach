@@ -168,12 +168,42 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
 
         previous_end = bout_end_index
 
+    # Vanhees Border Criteria
+    # Border Criteria
+    df = pd.DataFrame({'NW Vector': vert_nonwear_array,
+                       'idx': np.arange(len(vert_nonwear_array)),
+                       "Unique Period Key": (pd.Series(vert_nonwear_array).diff(1) != 0).astype('int').cumsum(),
+                       'Duration': np.ones(len(vert_nonwear_array))})
+    period_durations = df.groupby('Unique Period Key').sum() / (accel_freq * 60)
+    period_durations['Wear'] = [False if val == 0 else True for val in period_durations['NW Vector']]
+    period_durations['Adjacent Sum'] = period_durations['Duration'].shift(1, fill_value=0) + period_durations[
+        'Duration'].shift(-1, fill_value=0)
+    period_durations['Period Start'] = df.groupby('Unique Period Key').min()['idx']
+    period_durations['Period End'] = df.groupby('Unique Period Key').max()['idx']+1
+    for index, row in period_durations.iterrows():
+        if not row['Wear']:
+            if row['Duration'] <= 180:
+                if row['Duration'] / row['Adjacent Sum'] < 0.8:
+                    vert_nonwear_array[row['Period Start']:row['Period End']] = True
+            elif row['Duration'] <= 360:
+                if row['Duration'] / row['Adjacent Sum'] < 0.3:
+                    vert_nonwear_array[row['Period Start']:row['Period End']] = True
+
+    if not quiet:
+        print("Finished Vert Calculation.")
+
+    vert_nonwear_start_datapoints = np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == 1)[
+        0]
+    if vert_nonwear_array[0] == 1:
+        vert_nonwear_start_datapoints = np.insert(vert_nonwear_start_datapoints, 0, 0)
+    vert_nonwear_end_datapoints = \
+    np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == -1)[0]
+    if vert_nonwear_array[-1] == 1:
+        vert_nonwear_end_datapoints = np.append(vert_nonwear_end_datapoints, len(vert_nonwear_array))
+
     start_stop_df = pd.DataFrame({"Start Datapoint": vert_nonwear_start_datapoints,
                                   "End Datapoint": vert_nonwear_end_datapoints}, index = range(1,len(vert_nonwear_start_datapoints) + 1))
 
     vert_nonwear_array = np.array(vert_nonwear_array, bool)
-
-    if not quiet:
-        print("Finished Vert Calculation.")
 
     return start_stop_df, vert_nonwear_array
