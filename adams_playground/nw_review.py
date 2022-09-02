@@ -25,7 +25,7 @@ import os
 
 study_save_dir='W:/NiMBaLWEAR/'
 study_code='OND09'
-subject_id = '0067' #0060 0065 0067 0069 0070 0078 0080 0092 0115
+subject_id = '0070' #0060 0065 0067 0069 0070 0078 0080 0092 0115
 coll_id = '01'
 device_type='AXV6'
 device_location='RWrist'
@@ -191,20 +191,23 @@ vm = np.sqrt(np.square(accel).sum(axis=0)) - 1
 # temp_sample_rate = night_device.signal_headers[temp_ind]['sample_rate']
 end_datetime = start_datetime + timedelta(seconds = (len(vm))/accel_sample_rate)
 
-accel_times = mdates.drange(start_datetime, end_datetime, timedelta(seconds = 1/accel_sample_rate))[:-1]#mdates.date2num([start_datetime + timedelta(seconds=(i / accel_sample_rate)) for i in range(len(vm))])
-temp_times = mdates.drange(start_datetime, end_datetime, timedelta(seconds = 1/temp_sample_rate))[:-1]#mdates.date2num([start_datetime + timedelta(seconds=(i / temp_sample_rate)) for i in range(len(temp))])
+accel_times = pd.date_range(start_datetime, end_datetime, periods = len(vm))
 
 smoothed_temperature = filter_signal(temp, 'lowpass', low_f=0.005, sample_f=temp_sample_rate)
 smoothed_temp_deg_per_min = np.diff(smoothed_temperature, prepend=1) * 60 * temp_sample_rate
 # temp_change_idx = pd.date_range(start_datetime, periods=len(smoothed_temp_deg_per_min), freq=f'{1 / temp_sample_rate}S')
 temp_change = pd.Series(smoothed_temp_deg_per_min[::-1]).rolling(int(5 * 60 * temp_sample_rate)).mean()[::-1]
+temp_times = pd.date_range(start_datetime, end_datetime, periods = len(temp_change))
 # temp_change.index = temp_change_idx
 
 fig, ax = plt.subplots(2, 3, sharex='all', figsize=fig_size)
 
 ax[0][0].plot_date(accel_times, vm, fmt='', linewidth=0.25, color='black')
+ax[0][0].set_title('Accelerometer Vector Magnitude')
 ax[0][1].plot_date(temp_times, temp, fmt='', linewidth=0.25, color= 'black')
+ax[0][1].set_title('Temperature Absolute Value')
 ax[0][2].plot_date(temp_times, temp_change, fmt='', linewidth=0.25, color= 'black')
+ax[0][2].set_title('Temperature 5 minute mean change')
 ax[1][0].plot_date(accel_times, vm, fmt='', linewidth=0.25, color='black')
 ax[1][1].plot_date(temp_times, temp, fmt='', linewidth=0.25, color= 'black')
 ax[1][2].plot_date(temp_times, temp_change, fmt='', linewidth=0.25, color= 'black')
@@ -243,6 +246,9 @@ file_name = "_".join([study_code,subject_id,coll_id,device_type,device_location,
 plt.savefig(os.path.join(r'images\combine_bouts_figs',file_name))
 plt.show()
 x = 1
+
+
+############## OTHER USEFUL PLOTS ###################
 # temp_array = np.array(temp)
 #
 # plt.figure()
