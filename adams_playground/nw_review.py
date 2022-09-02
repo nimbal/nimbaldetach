@@ -109,7 +109,7 @@ print("Reading event and log files.")
 # read event files
 nonwear_old = pd.read_csv(nonwear_csv_path, dtype=str)
 
-nonwear = load_in_pipeline_nonwear_df(device, study_code, subject_id, coll_id, device_type, device_location, border_critiera=True, low_temperature_cutoff=low_temp_cutoff,high_temperature_cutoff=high_temp_cutoff)
+nonwear = load_in_pipeline_nonwear_df(device, study_code, subject_id, coll_id, device_type, device_location, border_criteria=True, low_temperature_cutoff=low_temp_cutoff,high_temperature_cutoff=high_temp_cutoff)
 
 # Read log files
 removal_log = pd.read_excel(removal_log_path, dtype=str)

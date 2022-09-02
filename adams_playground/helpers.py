@@ -3,7 +3,7 @@ sys.path.insert(1, r'C:\Users\ahvert\PycharmProjects\vertdetach\src')
 from vertdetach import vertdetach as vertdetach
 import datetime as dt
 
-def load_in_pipeline_nonwear_df(data_object,study_code, subject_id, coll_id, device_type, device_location, border_critiera = False, low_temperature_cutoff=26, high_temperature_cutoff=30):
+def load_in_pipeline_nonwear_df(data_object,study_code, subject_id, coll_id, device_type, device_location, border_criteria = False, low_temperature_cutoff=26, high_temperature_cutoff=30):
     night_device = data_object
     x_ind = night_device.get_signal_index('Accelerometer x')
     y_ind = night_device.get_signal_index('Accelerometer y')
@@ -24,7 +24,7 @@ def load_in_pipeline_nonwear_df(data_object,study_code, subject_id, coll_id, dev
         temperature_values=temp,
         accel_freq=accel_sample_rate,
         temperature_freq=temp_sample_rate,
-        border_critiera = border_critiera)
+        border_criteria = border_criteria)
     # low_temperature_cutoff=low_temperature_cutoff,
     # high_temperature_cutoff=high_temperature_cutoff,
     # temp_dec_roc=temp_dec_roc,
