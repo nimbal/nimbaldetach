@@ -176,6 +176,10 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
                            'Duration': np.ones(len(vert_nonwear_array))})
         period_durations = df.groupby('Unique Period Key').sum() / (accel_freq * 60)
         period_durations['Wear'] = [True if val == 0 else False for val in period_durations['NW Vector']]
+        period_durations['shortest_adjacent'] = np.nanmin(
+            np.array([period_durations['Duration'].shift(1, fill_value=None),
+                      period_durations['Duration'].shift(-1, fill_value=None)]).T,
+            axis=1)  # Currently filling with NAN values and ignoring them, that way wear periods at the end of a collection can still be converted
         period_durations['Adjacent Sum'] = period_durations['Duration'].shift(1, fill_value=0) + period_durations[
             'Duration'].shift(-1, fill_value=0)
         period_durations['Period Start'] = df.groupby('Unique Period Key').min()['idx']
@@ -183,15 +187,17 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
         for index, row in period_durations.iterrows():
             if row['Wear']:
                 if row['Duration'] <= 180:
-                    if row['Duration'] / row['Adjacent Sum'] < 0.8:
+                    # if row['Duration'] / row['Adjacent Sum'] < 0.3: # Original VH
+                    if row['Duration'] / row['shortest_adjacent'] < 0.4: # If wear duration less than 3 hours, wear duration must be at least 160% of the length of the shortest bordering non-wear, else change to non-wear
                         vert_nonwear_array[row['Period Start']:row['Period End']] = True
                 elif row['Duration'] <= 360:
-                    if row['Duration'] / row['Adjacent Sum'] < 0.3:
+                    # if row['Duration'] / row['Adjacent Sum'] < 0.3: # Original VH
+                    if row['Duration'] / row['shortest_adjacent'] < 1.6: # If wear duration between 3 and 6 hours, wear duration must be at least 60% of the length of the shortest bordering non-wear, else change to non-wear
                         vert_nonwear_array[row['Period Start']:row['Period End']] = True
 
         vert_nonwear_start_datapoints = \
-        np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == 1)[
-            0]
+            np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == 1)[
+                0]
         if vert_nonwear_array[0] == 1:
             vert_nonwear_start_datapoints = np.insert(vert_nonwear_start_datapoints, 0, 0)
         vert_nonwear_end_datapoints = \
