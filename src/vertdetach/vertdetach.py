@@ -175,13 +175,13 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
                            "Unique Period Key": (pd.Series(vert_nonwear_array).diff(1) != 0).astype('int').cumsum(),
                            'Duration': np.ones(len(vert_nonwear_array))})
         period_durations = df.groupby('Unique Period Key').sum() / (accel_freq * 60)
-        period_durations['Wear'] = [False if val == 0 else True for val in period_durations['NW Vector']]
+        period_durations['Wear'] = [True if val == 0 else False for val in period_durations['NW Vector']]
         period_durations['Adjacent Sum'] = period_durations['Duration'].shift(1, fill_value=0) + period_durations[
             'Duration'].shift(-1, fill_value=0)
         period_durations['Period Start'] = df.groupby('Unique Period Key').min()['idx']
         period_durations['Period End'] = df.groupby('Unique Period Key').max()['idx'] + 1
         for index, row in period_durations.iterrows():
-            if not row['Wear']:
+            if row['Wear']:
                 if row['Duration'] <= 180:
                     if row['Duration'] / row['Adjacent Sum'] < 0.8:
                         vert_nonwear_array[row['Period Start']:row['Period End']] = True
