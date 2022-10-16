@@ -1,6 +1,6 @@
 """
 This is a varitation of handds_curate.scripts.nonwear_review where instead of just loading in non-wear data from a csv
-I also recalculate the data. This will help test its performancecompared to the most recently saved version
+I also recalculate the data. This will help test its performance compared to the most recently saved version
 """
 
 from pathlib import Path
