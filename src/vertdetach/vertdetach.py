@@ -21,6 +21,8 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
         low_temperature_cutoff (float): Low temperature for non-wear classification (see paper for details)
         high_temperature_cutoff (float): High temperature cut off for wear classification (see paper for details)
         num_axes (int): the number of axes that must be below the std threshold to be considered NW
+        border_criteria (bool): Whether or not to use the non-wear border criteria inspired by van Hees:
+                                https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061691
         quiet (bool): Whether or not to quiet print statements
 
     Returns:
