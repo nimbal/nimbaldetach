@@ -16,28 +16,29 @@ The DETACH algorithm is stored as a function called vertdetach within the /src/v
 The function itself is defined as follows
 ```python
 vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
-           temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-           temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
+           temperature_freq=0.25, std_thresh_mg_start=8.0, std_thresh_mg_end=8.0, low_temperature_cutoff=26,
+           high_temperature_cutoff=30, temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
 ```
 
 ### Input Arguments
 The input arguments and their definitions are listed in the table below:
 
-| Argument                | Data Type   | Optional (default value) or Required | Description                                                                                             |
-|-------------------------|-------------|--------------------------------------|---------------------------------------------------------------------------------------------------------|
-| x_values                | NumPy Array | Required                             | x-axis accelerometer values                                                                             |
-| y_values                | NumPy Array | Required                             | y-axis accelerometer values                                                                             |
-| z_values                | NumPy Array | Required                             | x-axis accelerometer values                                                                             |
-| temperature_values      | NumPy Array | Required                             | Temperature values                                                                                      |
-| accel_freq              | float       | Optional (75)                        | Frequency of the accelerometer in Hz                                                                    |
-| temperature_freq        | float       | Optional (0.25)                      | Frequency of the temperature in Hz                                                                      |
-| std_thresh_mg           | float       | Optional (8.0)                       | The value which the standard deviation (STD) of an axis in the window must be below to trigger non-wear |
-| low_temperature_cutoff  | float       | Optional (26.0)                      | Low temperature threshold for non-wear classification (see paper for more details)                      |
-| high_temperature_cutoff | float       | Optional (30.0)                      | High temperature threshold for non-wear classification (see paper for more details)                     |
-| temp_dec_roc            | float       | Optional (-0.2)                      | Temperature decrease rate-of-change threshold for non-wear classification (see paper for more details)  |
-| temp_inc_roc            | float       | Optional (0.1)                       | Temperature increase rate-of-change threshold for non-wear classification (see paper for more details)  |
-| num_axes                | int         | Optional (2)                         | Number of axes that must be below the STD threshold to be considered non-wear                           |
-| quiet                   | bool        | Optional (False)                     | Whether or not to quiet print statements.                                                               |
+| Argument                | Data Type   | Optional (default value) or Required | Description                                                                                                          |
+|-------------------------|-------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| x_values                | NumPy Array | Required                             | x-axis accelerometer values                                                                                          |
+| y_values                | NumPy Array | Required                             | y-axis accelerometer values                                                                                          |
+| z_values                | NumPy Array | Required                             | x-axis accelerometer values                                                                                          |
+| temperature_values      | NumPy Array | Required                             | Temperature values                                                                                                   |
+| accel_freq              | float       | Optional (75)                        | Frequency of the accelerometer in Hz                                                                                 |
+| temperature_freq        | float       | Optional (0.25)                      | Frequency of the temperature in Hz                                                                                   |
+| std_thresh_mg_start     | float       | Optional (8.0)                       | The value which the standard deviation (STD) of an axis in the window must be below to trigger the start of non-wear |
+| std_thresh_mg_end       | float       | Optional (8.0)                       | The value which the standard deviation (STD) of an axis in the window must be below to trigger the end of non-wear   |
+| low_temperature_cutoff  | float       | Optional (26.0)                      | Low temperature threshold for non-wear classification (see paper for more details)                                   |
+| high_temperature_cutoff | float       | Optional (30.0)                      | High temperature threshold for non-wear classification (see paper for more details)                                  |
+| temp_roc_start          | float       | Optional (-0.2)                      | Temperature decrease rate-of-change threshold for non-wear start classification (see paper for more details)         |
+| temp_roc_end            | float       | Optional (0.1)                       | Temperature increase rate-of-change threshold for non-wear end classification (see paper for more details)           |
+| num_axes                | int         | Optional (2)                         | Number of axes that must be below the STD threshold to be considered non-wear                                        |
+| quiet                   | bool        | Optional (False)                     | Whether or not to quiet print statements.                                                                            |
 ### Returns
 The algorithm returns a tuple with two objects:
 1. start_stop_df: A pandas DataFrame with the start and end datapoints of the non-wear bouts.

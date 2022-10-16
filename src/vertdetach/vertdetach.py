@@ -4,8 +4,8 @@ from scipy.signal import butter, filtfilt
 
 
 def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
-               temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-               temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False):
+               temperature_freq=0.25, std_thresh_mg_start=8.0, std_thresh_mg_end = 8.0, low_temperature_cutoff=26,
+               high_temperature_cutoff=30, temp_roc_start=-0.2, temp_roc_end=0.1, num_axes=2, quiet=False):
     """
     Non-wear algorithm with a 5 minute minimum non-wear duration using absolute temperature, temperature rate of
     change and accelerometer standard deviation of 3 axes to detect start and stop times of non-wear periods.
@@ -17,9 +17,12 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
         temperature_values (numpy array): temperature values
         accel_freq (float): frequency of accelerometer in hz
         temperature_freq (float): frequency of temperature sensor in hz
-        std_thresh_mg (float): the value which the std of an axis in the window must be below to trigger non-wear
+        std_thresh_mg_start (float): the value the std of an axis in the window must be below to trigger non-wear start
+        std_thresh_mg_end (float): the value the std of an axis in the window must be below to trigger non-wear end
         low_temperature_cutoff (float): Low temperature for non-wear classification (see paper for details)
         high_temperature_cutoff (float): High temperature cut off for wear classification (see paper for details)
+        temp_roc_start (float): The temperature rate of change used to determine non-wear start (see paper for details)
+        temp_roc_end (float): The temperature rate of change used to determine non-wear end (see paper for details)
         num_axes (int): the number of axes that must be below the std threshold to be considered NW
         quiet (bool): Whether or not to quiet print statements
 
@@ -61,7 +64,8 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
     vert_nonwear_end_datapoints = []
 
     # mg to g
-    std_thresh_g = std_thresh_mg / 1000
+    std_thresh_g_start = std_thresh_mg_start / 1000
+    std_thresh_g_end = std_thresh_mg_end / 1000
 
     # Create seies of 1 minute rolling std
     x_std_fwd = pd.Series(x_values)[::-1].rolling(round(accel_freq * 60)).std()[::-1]  # 1 minute forward looking STD
@@ -81,13 +85,13 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
     # Create a constant which converts accel datapoint to temp_datapoint
 
     # Create DF column counting number of axes below std_thresh
-    std_df["Num Axes Fwd"] = np.sum(np.array([std_df["x_std_fwd"] < std_thresh_g,
-                                              std_df["y_std_fwd"] < std_thresh_g,
-                                              std_df["z_std_fwd"] < std_thresh_g], int), axis=0)
+    std_df["Num Axes Fwd"] = np.sum(np.array([std_df["x_std_fwd"] < std_thresh_g_start,
+                                              std_df["y_std_fwd"] < std_thresh_g_start,
+                                              std_df["z_std_fwd"] < std_thresh_g_start], int), axis=0)
 
-    std_df["Num Axes Backwards"] = np.sum(np.array([std_df["x_std_back"] < std_thresh_g,
-                                                    std_df["y_std_back"] < std_thresh_g,
-                                                    std_df["z_std_back"] < std_thresh_g], int), axis=0)
+    std_df["Num Axes Backwards"] = np.sum(np.array([std_df["x_std_back"] < std_thresh_g_end,
+                                                    std_df["y_std_back"] < std_thresh_g_end,
+                                                    std_df["z_std_back"] < std_thresh_g_end], int), axis=0)
 
     # Find spots where at least num_axes are below the STD threshold for 90% of the next 5 minutes
     std_df["Perc Num Axes >= num_axes for Next 5 Mins (fwd looking)"] = \
@@ -120,7 +124,7 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
 
     end_crit_1 = np.array(np.where((full_df["Num Axes Backwards"] == 0) &
                                    (full_df["Perc Num Axes >= num_axes for Next 5 Mins (backward looking)"] <= 0.50) &
-                                   (full_df["Mean Five minute Temp Change"] > temp_inc_roc)))[0]
+                                   (full_df["Mean Five minute Temp Change"] > temp_roc_end)))[0]
 
     # Second End Criteria: Absolute Temperature Path
     end_crit_2 = np.array(np.where((full_df["Num Axes Backwards"] == 0) &
@@ -141,7 +145,7 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
 
         # Start Criteria 1: Rate of Change Path
         if (full_df["Max Temp in next five mins"][start_ind] < high_temperature_cutoff) & (
-                full_df["Mean Five minute Temp Change"][start_ind] < temp_dec_roc):
+                full_df["Mean Five minute Temp Change"][start_ind] < temp_roc_start):
             valid_start = True
 
         # Start Criteria 2: Absolute Temperature Path
