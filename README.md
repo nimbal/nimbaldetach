@@ -74,6 +74,9 @@ print("The device was not worn %s percent of the time" % pct_worn)
 ```
 ## Version/Changelog
 
+v1.0.3
+- loosen dependency requirements to minimum version instead of minor version
+
 v1.0.2
 - [Detecting accelerometer non-wear periods using change in acceleration combined with rate-of-change in temperature.](https://doi.org/10.1186/s12874-022-01633-6)
 
