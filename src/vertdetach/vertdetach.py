@@ -5,7 +5,7 @@ from scipy.signal import butter, filtfilt
 
 def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
                temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-               temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False):
+               temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, border_criteria = 1, quiet=False):
     """
     Non-wear algorithm with a 5 minute minimum non-wear duration using absolute temperature, temperature rate of
     change and accelerometer standard deviation of 3 axes to detect start and stop times of non-wear periods.
@@ -21,6 +21,8 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
         low_temperature_cutoff (float): Low temperature for non-wear classification (see paper for details)
         high_temperature_cutoff (float): High temperature cut off for wear classification (see paper for details)
         num_axes (int): the number of axes that must be below the std threshold to be considered NW
+        border_criteria (int): The number of times to loop over the non-wear border criteria inspired by van Hees:
+                                https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061691
         quiet (bool): Whether or not to quiet print statements
 
     Returns:
@@ -168,9 +170,45 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
 
         previous_end = bout_end_index
 
-    start_stop_df = pd.DataFrame({"Start Datapoint": vert_nonwear_start_datapoints,
-                                  "End Datapoint": vert_nonwear_end_datapoints}, index = range(1,len(vert_nonwear_start_datapoints) + 1))
+    # Vanhees Border Criteria
+    for n in range(border_criteria):
+        df = pd.DataFrame({'NW Vector': vert_nonwear_array,
+                           'idx': np.arange(len(vert_nonwear_array)),
+                           "Unique Period Key": (pd.Series(vert_nonwear_array).diff(1) != 0).astype('int').cumsum(),
+                           'Duration': np.ones(len(vert_nonwear_array))})
+        period_durations = df.groupby('Unique Period Key').sum() / (accel_freq * 60)
+        period_durations['Wear'] = [True if val == 0 else False for val in period_durations['NW Vector']]
+        period_durations['shortest_adjacent'] = np.nanmin(
+            np.array([period_durations['Duration'].shift(1, fill_value=None),
+                      period_durations['Duration'].shift(-1, fill_value=None)]).T,
+            axis=1)  # Currently filling with NAN values and ignoring them, that way wear periods at the end of a collection can still be converted
+        period_durations['Adjacent Sum'] = period_durations['Duration'].shift(1, fill_value=0) + period_durations[
+            'Duration'].shift(-1, fill_value=0)
+        period_durations['Period Start'] = df.groupby('Unique Period Key').min()['idx']
+        period_durations['Period End'] = df.groupby('Unique Period Key').max()['idx'] + 1
+        for index, row in period_durations.iterrows():
+            if row['Wear']:
+                if row['Duration'] <= 180:
+                    if row['Duration'] / row['shortest_adjacent'] < 1.6: # For wear periods 0-3 hours in length, the wear period must be less than 160% of the duration of its shortest bordering non-wear period.
+                        vert_nonwear_array[row['Period Start']:row['Period End']] = True
+                elif row['Duration'] <= 360:
+                    # if row['Duration'] / row['Adjacent Sum'] < 0.3: # Original VH
+                    if row['Duration'] / row['shortest_adjacent'] < 1.6: # For wear periods 3-6 hours in length, the wear period must be less than 60% of the duration of its shortest bordering non-wear period.
+                        vert_nonwear_array[row['Period Start']:row['Period End']] = True
 
+        vert_nonwear_start_datapoints = \
+            np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == 1)[
+                0]
+        if vert_nonwear_array[0] == 1:
+            vert_nonwear_start_datapoints = np.insert(vert_nonwear_start_datapoints, 0, 0)
+        vert_nonwear_end_datapoints = \
+            np.where(pd.Series(vert_nonwear_array) - pd.Series(vert_nonwear_array).shift(1) == -1)[0]
+        if vert_nonwear_array[-1] == 1:
+            vert_nonwear_end_datapoints = np.append(vert_nonwear_end_datapoints, len(vert_nonwear_array))
+
+    start_stop_df = pd.DataFrame({"Start Datapoint": vert_nonwear_start_datapoints,
+                                  "End Datapoint": vert_nonwear_end_datapoints},
+                                 index=range(1, len(vert_nonwear_start_datapoints) + 1))
     vert_nonwear_array = np.array(vert_nonwear_array, bool)
 
     if not quiet:

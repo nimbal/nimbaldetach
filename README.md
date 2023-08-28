@@ -17,7 +17,7 @@ The function itself is defined as follows
 ```python
 vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
            temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-           temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
+           temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, border_criteria = False, quiet=False)
 ```
 
 ### Input Arguments
@@ -37,6 +37,7 @@ The input arguments and their definitions are listed in the table below:
 | temp_dec_roc            | float       | Optional (-0.2)                      | Temperature decrease rate-of-change threshold for non-wear classification (see paper for more details)  |
 | temp_inc_roc            | float       | Optional (0.1)                       | Temperature increase rate-of-change threshold for non-wear classification (see paper for more details)  |
 | num_axes                | int         | Optional (2)                         | Number of axes that must be below the STD threshold to be considered non-wear                           |
+| border_criteria         | bool        | Optional (False)                     | Determines whether or not to use the non-wear border criteria inspired by van Hees here: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061691 <br><br>For additional information, look at this discussion: https://github.com/nimbal/vertdetach/issues/1|
 | quiet                   | bool        | Optional (False)                     | Whether or not to quiet print statements.                                                               |
 ### Returns
 The algorithm returns a tuple with two objects:
