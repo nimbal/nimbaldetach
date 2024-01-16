@@ -3,9 +3,9 @@ import pandas as pd
 from scipy.signal import butter, filtfilt
 
 
-def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
-               temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-               temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False):
+def nimbaldetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
+                 temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
+                 temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False):
     """
     Non-wear algorithm with a 5 minute minimum non-wear duration using absolute temperature, temperature rate of
     change and accelerometer standard deviation of 3 axes to detect start and stop times of non-wear periods.
@@ -30,7 +30,7 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
         vert_nonwear_array: numpy array with length of the accelerometer data marked as either wear (0) or non-wear (1)
     """
     if not quiet:
-        print("Starting Vert Calculation...")
+        print("Starting DETACH Calculation...")
 
     # Create generic filter script for smoothing temperature
     def filter_signal(data, filt_type, low_f=None, high_f=None, sample_f=None, filter_order=2):
@@ -174,6 +174,6 @@ def vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
     vert_nonwear_array = np.array(vert_nonwear_array, bool)
 
     if not quiet:
-        print("Finished Vert Calculation.")
+        print("Finished DETACH Calculation.")
 
     return start_stop_df, vert_nonwear_array

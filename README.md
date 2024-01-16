@@ -1,4 +1,4 @@
-# vertdetach 
+# nimbaldetach 
 [![DOI](https://zenodo.org/badge/447634532.svg)](https://zenodo.org/badge/latestdoi/447634532)
 
 DETACH (Device Temperature and Acceleration Change) algorithm detects non-wear periods for body-worn accelerometers 
@@ -10,14 +10,14 @@ Vert, A., Weber, K. S., Thai, V., Turner, E., Beyer, K. B., Cornish, B. F., Godk
 & Van Ooteghem, K. (2022). Detecting accelerometer non-wear periods using change in acceleration combined with 
 rate-of-change in temperature. *BMC Medical Research Methodology, 22*. https://doi.org/10.1186/s12874-022-01633-6
 
-## Using the vertdetach Algorithm
-The DETACH algorithm is stored as a function called vertdetach within the /src/vertdetach/vertdetach.py Python file.
+## Using the DETACH Algorithm
+The DETACH algorithm is stored as a function called nimbaldetach within the /src/nimbaldetach/nimbaldetach.py Python file.
 
 The function itself is defined as follows
 ```python
-vertdetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
-           temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
-           temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
+nimbaldetach(x_values, y_values, z_values, temperature_values, accel_freq=75,
+             temperature_freq=0.25, std_thresh_mg=8.0, low_temperature_cutoff=26, high_temperature_cutoff=30,
+             temp_dec_roc=-0.2, temp_inc_roc=0.1, num_axes=2, quiet=False)
 ```
 
 ### Input Arguments
@@ -44,9 +44,10 @@ The algorithm returns a tuple with two objects:
 2. vert_nonwear_array: A numpy array with the same length of the accelerometer data marked as either wear (0) or non-wear (1)
 
 ### Example
-Example python code to determine the percentage of non-wear time from 
+Example python code to determine the percentage of non-wear time from
+
 ```python
-from src.vertdetach.vertdetach import vertdetach
+from src.nimbaldetach.nimbaldetach import nimbaldetach
 import numpy as np
 
 # Load Data
@@ -61,13 +62,13 @@ accel_freq = 75
 temperature_freq = 0.25
 
 # Calculate Non-wear
-start_stop_df, nonwear_array = vertdetach(x_values = x_values, y_values = y_values, z_values = z_values, 
-                                          temperature_values = temperature_values, accel_freq = accel_freq, 
-                                          temperature_freq = temperature_freq)
+start_stop_df, nonwear_array = nimbaldetach(x_values=x_values, y_values=y_values, z_values=z_values,
+                                            temperature_values=temperature_values, accel_freq=accel_freq,
+                                            temperature_freq=temperature_freq)
 
 # Analysis
 total_wear_time = np.sum(nonwear_array)
-pct_worn = total_wear_time/len(nonwear_array) * 100
+pct_worn = total_wear_time / len(nonwear_array) * 100
 
 print("The device was not worn %s percent of the time" % pct_worn)
 
@@ -82,26 +83,26 @@ v1.0.2
 
 ## Installation
 
-To install the latest release of vertdetach directly from GitHub using pip, run the following line in terminal or 
+To install the latest release of nimbaldetach directly from GitHub using pip, run the following line in terminal or 
 console:
 
-`pip install git+https://github.com/nimbal/vertdetach`
+`pip install git+https://github.com/nimbal/nimbaldetach`
 
 To install a specific release, insert `@v#.#.#` after the repository name replacing with the tag associated with that 
 release. For example:
 
-`pip install git+https://github.com/nimbal/vertdetach@v1.0.0`
+`pip install git+https://github.com/nimbal/nimbaldetach@v1.0`
 
-## Include vertdetach as Package Dependency
+## Include nimbaldetach as Package Dependency
 
-To include the latest release of vertdetach as a dependency in your Python package, include the following
+To include the latest release of nimbaldetach as a dependency in your Python package, include the following
 string within the list alongside your other dependencies:
 
-`install_requires=['vertdetach@git+https://github.com/nimbal/vertdetach@[version]']`
+`install_requires=['nimbaldetach@git+https://github.com/nimbal/nimbaldetach@[version]']`
 
 To include a specific release, replace `[version]` with the tag associated with that release.
 
-## vertdetach Package Dependencies
+## nimbaldetach Package Dependencies
 - numpy
 - pandas
 - scipy
